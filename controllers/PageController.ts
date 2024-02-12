@@ -5,11 +5,18 @@ import Context from "./Context.ts";
 
 export default class PageController extends BaseController {
 
+    private basePath:string | undefined;
+
+    constructor(basePath: string | undefined = undefined) {
+        super();
+        this.basePath = basePath;
+    }
+
     public async handle(context: Context): Promise<Response> {
         if(context.isApiRequest)
             return super.handle(context);
 
-        const pageDir = join(Deno.cwd(), "pages");
+        const pageDir = join(Deno.cwd(), this.basePath ?? "pages");
         let filePath = join(pageDir, context.url.pathname);
     
         try {
