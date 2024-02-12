@@ -6,15 +6,16 @@ Realiza o tratamento de request em cadeia.
 
 Este é o modelo de configuração do servidor:
 ```
-import { BaseController, Context, PageController } from "./mod.ts";
+import { Context, PageController } from "./mod.ts";
 
-const controllers = BaseController.enlistHandlers(
-    PageController
-);
-
+const pageController = new PageController();
 const handler = async (request: Request): Promise<Response> => {
+
+    const taskController = new TaskController();
+    pageController.setNext(taskController);
+
     const context = new Context(request);
-    const response = await controllers.handle(context);
+    const response = await pageController.handle(context);
     return response;
 };
 
@@ -32,6 +33,8 @@ O objeto controllers resultante representa o primeiro nó da cadeia, e deve manu
 Caso um diretório seja solicitado na request o arquivo index.html deste diretório será retornado.
 
 No caso de criação de novos diretórios dentro de pages as páginas deverão conter a tag base href = /[diretorio]/
+
+É possível informar outro diretório como parâmetro, o padrão é pages.
 
 ## Criando um novo controller
 
